@@ -151,6 +151,40 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; letter-spac
 .lang-toggle[data-active="en"] .slider { left: 3px; width: 40px; }
 .lang-toggle[data-active="zh"] .slider { left: calc(50% + 1px); width: 40px; }
 
+/* Resume Download Dropdown */
+.cv-dropdown { position: relative; display: flex; align-items: center; }
+.cv-btn {
+  display: flex; align-items: center; gap: 7px;
+  font-family: inherit; font-size: 12.5px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--paper-dim); background: var(--ink-3);
+  border: 1px solid var(--line); border-radius: 20px;
+  padding: 6px 14px; cursor: pointer; transition: all .3s;
+}
+.cv-btn:hover { color: var(--paper); border-color: var(--gold); }
+.cv-btn::after { content: "\25BE"; font-size: 9px; line-height: 1; transition: transform .3s; }
+.cv-dropdown.open .cv-btn { color: var(--paper); border-color: var(--gold); }
+.cv-dropdown.open .cv-btn::after { transform: rotate(180deg); }
+.cv-menu {
+  position: absolute; top: calc(100% + 12px); right: 0;
+  min-width: 188px; background: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 12px;
+  padding: 6px; opacity: 0; visibility: hidden;
+  transform: translateY(-8px); transition: all .25s ease;
+  box-shadow: 0 20px 50px rgba(0,0,0,.5);
+}
+.cv-dropdown.open .cv-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.nav-links .cv-menu a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  color: var(--paper-dim); font-size: 13px; font-weight: 500;
+  letter-spacing: 0.02em; text-transform: none;
+  transition: all .2s;
+}
+.nav-links .cv-menu a:hover { background: var(--ink-3); color: var(--paper); }
+.nav-links .cv-menu a::after { display: none; }
+.nav-links .cv-menu a .cv-ico { color: var(--gold); font-size: 15px; line-height: 1; }
+
 /* Mobile Menu */
 .nav-hamburger {
   display: none;
@@ -190,6 +224,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; letter-spac
   .nav-links.open { transform: translateX(0); }
   .wrap { padding: 0 24px; }
   .nav-inner { padding: 0 24px; }
+  .cv-menu { right: auto; left: 0; }
 }
 
 /* ========== HERO SECTION ========== */
@@ -1241,6 +1276,13 @@ a.contact-info-item:hover .contact-info-value { color: var(--gold); }
       <a href="#portfolio" data-en="Portfolio" data-zh="作品集">Portfolio</a>
       <a href="#skills" data-en="Skills" data-zh="专业技能">Skills</a>
       <a href="#contact" data-en="Contact" data-zh="联系我">Contact</a>
+      <div class="cv-dropdown" id="cvDropdown">
+        <button type="button" class="cv-btn" id="cvBtn" aria-haspopup="true" aria-expanded="false" onclick="toggleCvMenu(event)" data-en="Resume" data-zh="简历下载">Resume</button>
+        <div class="cv-menu" id="cvMenu" role="menu">
+          <a href="pdf/cv_0.pdf" download role="menuitem" data-en="English Resume" data-zh="英文简历">English Resume</a>
+          <a href="pdf/cv_1.pdf" download role="menuitem" data-en="Chinese Resume" data-zh="中文简历">Chinese Resume</a>
+        </div>
+      </div>
       <div class="lang-toggle" data-active="en" id="langToggle" onclick="toggleLang()">
         <span class="active" data-lang="en">EN</span>
         <span data-lang="zh">中文</span>
@@ -1649,6 +1691,27 @@ navLinks.querySelectorAll('a').forEach(a => {
     hamburger.classList.remove('open');
     navLinks.classList.remove('open');
   });
+});
+
+// ===== Resume Download Dropdown =====
+const cvDropdown = document.getElementById('cvDropdown');
+const cvBtn = document.getElementById('cvBtn');
+function toggleCvMenu(e) {
+  e.stopPropagation();
+  const open = cvDropdown.classList.toggle('open');
+  cvBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+document.addEventListener('click', (e) => {
+  if (cvDropdown.classList.contains('open') && !cvDropdown.contains(e.target)) {
+    cvDropdown.classList.remove('open');
+    cvBtn.setAttribute('aria-expanded', 'false');
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && cvDropdown.classList.contains('open')) {
+    cvDropdown.classList.remove('open');
+    cvBtn.setAttribute('aria-expanded', 'false');
+  }
 });
 
 // ===== i18n content (for innerHTML paragraphs) =====
